@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Greenstalk Planner</title>
+    <link rel="stylesheet" href="style.css" />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans;wght@400;500;600&display=swap" rel="stylesheet" />
+  </head>
+
+  <body>
+    <header>
+        <h1 class="logo">Greenstalk Planner</h1>
+        <div class="header-actions">
+            <select id="layout-select">
+                <option value="">Select a layout</option>
+            </select>
+            <button id="new-layout-btn" class="btn-primary">Add new layout</button>
+        </div>
+    </header>
+
+    <main>
+        <aside id="sidebar">
+            <h2>Plant library</h2>
+            <div id="filter-row">
+                <button class="filter-btn active" data-type="all">All</button>
+                <button class="filter-btn" data-type="veggie">Veggie</button>
+                <button class="filter-btn" data-type="herb">Herb</button>
+                <button class="filter-btn" data-type="fruit">Fruit</button>
+                <button class="filter-btn" data-type="flower">Flower</button>
+            </div> 
+            <div id="plant-list"></div>
+        </aside>
+
+        <section id="planner">
+            <div id="empty-state">
+                <p>Select a layout or create a new one to get started.</p>
+            </div>
+
+            <div id="planter-wrap" class="hidden">
+                <div class="planter-header">
+                    <h2 id="layout-title">My Garden</h2>
+                    <div class="planter-controls">
+                        <span id="tier-count-label"></span>
+                        <button id="check-compat-btn" class="btn-secondary">
+                            Check compatibility
+                        </button>
+                        <button id="clear-btn" class="btn-ghost">Clear all</button>
+                    </div>
+                </div>
+
+                <div id="planter-grid"></div>
+
+                <div id="compat-result" class="hidden">
+                    <h3>Compatibility Report</h3>
+                    <div id="compat-body"></div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div id="modal-overlay" class="hidden">
+        <div id="modal">
+            <h2>New Layout</h2>
+            <label>Layout name
+                <input type="text" id="modal-name" placeholder="e.g. Salsa Ingredient Bar" />
+            </label>
+            <label>Greenstalk size
+                <select id="modal-tiers">
+                    <option value="2">2-tier</option>
+                    <option value="3">3-tier</option>
+                    <option value="4">4-tier</option>
+                    <option value="5">5-tier</option>
+                </select>
+            </label>
+            <label>Color
+                <input type="text" id="modal-color" placeholder="e.g. sage" />
+            </label>
+            <div class="modal-actions">
+                <button id="modal-cancel" class="btn-ghost">Cancel</button>
+                <button id="modal-create" class="btn-primary">Create</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="tooltip" class="hidden"></div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
