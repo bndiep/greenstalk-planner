@@ -17,7 +17,7 @@ class WaterLevel(str, Enum):
     low="low"
 
 class TierType(str, Enum):
-    original = "orignal" # deeper pockets can support longer roots
+    original = "original" # deeper pockets can support longer roots
     leaf = "leaf" # shallower pockets can support more compact, shallow root plants
 
 class TierSupport(str, Enum):
