@@ -118,6 +118,52 @@ main {
   flex: 1;
 }
 
+/* ─── Tier Info ───────────────────────────────────────────── */
+
+.tier-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.25rem;
+    width: 60px;
+    flex-shrink: 0;
+}
+
+.tier-toggle {
+    font-size: 0.65rem;
+    font-family: inherit;
+    font-weight: 600;
+    padding: 0.2rem 0.4rem;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.15s;
+    border: 1px solid var(--stone-light);
+    background: white;
+    color: var(--stone);
+}
+
+.tier-toggle.original {
+    background: white;
+    color: var(--green-dark);
+    border-color: var(--green-mid);
+}
+
+.tier-toggle.leaf {
+    background: var(--green-pale);
+    color: var(--green-dark);
+    border-color: var(--green-light);
+}
+
+.tier-toggle:hover {
+    background: var(--green-pale);
+    border-color: var(--green-light);
+}
+
+.tier-toggle:focus-visible {
+    outline: 2px solid var(--green-light);
+    outline-offset: 2px;
+}
+
 /* ─── Sidebar ─────────────────────────────────────────────── */
 
 aside {

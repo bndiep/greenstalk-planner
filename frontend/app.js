@@ -4,6 +4,7 @@ const API = "http://localhost:8000";
 let allPlants = [];
 let selectedPlantId = null;
 let currentLayout = null;
+let currentTierConfigs = {}; // if this was TS, Record<number, string> (e.g. { 1: "leaf", 2: "original" })
 let currentPockets = {}; // key: "tier-pocket", value: plant_id, e.g. {"1-1": 3}
 
 async function init() {
@@ -57,6 +58,7 @@ function selectPlant(id) {
     });
 }
 
+// ALL layouts
 async function loadLayouts() {
     const res = await fetch(`${API}/layouts/`);
     const layouts = await res.json();
@@ -71,11 +73,17 @@ async function loadLayouts() {
     });
 }
 
+// single layout
 async function loadLayout(id) {
     const res = await fetch(`${API}/layouts/${id}`);
     const data = await res.json();
     currentLayout = data.layout;
+    currentTierConfigs = {};
     currentPockets = {};
+
+    data.tier_configs.forEach((c) => {
+        currentTierConfigs[c.tier] = c.tier_type;
+    })
 
     data.pockets.forEach((p) => {
         if (p.plant_id) {
@@ -120,10 +128,27 @@ function renderPlanter() {
         const row = document.createElement("div");
         row.className = "tier-row";
 
+        const tierInfo = document.createElement("div");
+        tierInfo.className = "tier-info"
+
         const label = document.createElement("div");
         label.className = "tier-label";
         label.textContent = `Tier ${tier}`;
-        row.appendChild(label);
+
+        const tierType = currentTierConfigs[tier] ?? "original";
+
+        const toggle = document.createElement("button");
+        toggle.className = `tier-toggle ${tierType}`;
+        const tierTypeText = tierType === "original" ? "original" : "leaf";
+        toggle.textContent = tierTypeText.toUpperCase();
+        toggle.setAttribute("aria-pressed", !!tierType === "leaf");
+        toggle.setAttribute("aria-label", `Tier ${tier} type: ${tierType}. Click to switch tier to ${tierTypeText}.`)
+        
+        toggle.addEventListener("click", () => handleTierToggle(tier, tierType));
+
+        tierInfo.appendChild(label);
+        tierInfo.appendChild(toggle);
+        row.appendChild(tierInfo);
 
         const pockets = document.createElement("div");
         pockets.className = "tier-pockets";
@@ -154,6 +179,27 @@ function renderPlanter() {
         row.appendChild(pockets);
         grid.appendChild(row);
     }
+}
+
+async function handleTierToggle(tier, currentType) {
+    const updatedType = currentType === "original" ? "leaf" : "original";
+    console.log("did this get clicked?");
+    console.log("updatedType: ", updatedType, "currentType: ", currentType)
+
+    const res = await fetch(`${API}/layouts/${currentLayout.id}/tiers`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ tier, tier_type: updatedType }),
+    });
+
+    if (!res.ok) {
+        const err = await res.json();
+        alert(err.detail);
+        return;
+    }
+
+    currentTierConfigs[tier] = updatedType;
+    renderPlanter();
 }
 
 async function handlePocketClick(tier, pocket) {
