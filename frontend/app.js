@@ -5,10 +5,9 @@ let allPlants = [];
 let selectedPlantId = null;
 let currentLayout = null;
 let currentTierConfigs = {}; // if this was TS, Record<number, string> (e.g. { 1: "leaf", 2: "original" })
-let currentPockets = {}; // key: "tier-pocket", value: plant_id, e.g. {"1-1": 3}
+let currentPockets = {}; // key: "tier-pocket", value: { plantId: number, quantity: number}, e.g. { "1-1": 3 }
 
 async function init() {
-  console.log("init fired");
   await loadPlants();
   await loadLayouts();
   setupEventListeners();
@@ -27,7 +26,7 @@ function renderPlantList(plants) {
 
   const list = document.createElement("ul");
   list.className = "plant-list";
-  list.setAttribute("aria-lable", "List of Plants");
+  list.setAttribute("aria-label", "List of Plants");
 
   plants.forEach((p) => {
     const li = document.createElement("li");
@@ -113,7 +112,10 @@ async function loadLayout(id) {
 
   data.pockets.forEach((p) => {
     if (p.plant_id) {
-      currentPockets[`${p.tier}-${p.pocket}`] = p.plant_id;
+      currentPockets[`${p.tier}-${p.pocket}`] = {
+        plantId: p.plant_id,
+        quantity: p.quantity,
+      };
     }
   });
 
@@ -167,7 +169,7 @@ function renderPlanter() {
     toggle.className = `tier-toggle ${tierType}`;
     const tierTypeText = tierType === "original" ? "original" : "leaf";
     toggle.textContent = tierTypeText.toUpperCase();
-    toggle.setAttribute("aria-pressed", !!tierType === "leaf");
+    toggle.setAttribute("aria-pressed", tierType === "leaf");
     toggle.setAttribute(
       "aria-label",
       `Tier ${tier} type: ${tierType}. Click to switch tier to ${tierTypeText}.`,
@@ -184,21 +186,52 @@ function renderPlanter() {
 
     for (let pocket = 1; pocket <= 6; pocket++) {
       const key = `${tier}-${pocket}`;
-      const plantId = currentPockets[key];
+      const { plantId, quantity } = currentPockets[key] ?? {};
       const plant = plantId ? allPlants.find((p) => p.id == plantId) : null;
 
       const el = document.createElement("div");
       el.className = `pocket${plant ? " filled" : ""}`;
-      el.textContent = plant ? plant.name : "+";
       el.dataset.tier = tier;
       el.dataset.pocket = pocket;
 
-      if (plant && plant.max_per_pocket) {
-        const quantity = 1; // default
-        if (quantity > plant.max_per_pocket) {
+      if (plant) {
+        el.innerHTML = `
+            <button class="pocket-clear" aria-label="Remove ${plant.name.toLowerCase()} from tier ${tier} pocket ${pocket}">x</button>
+            <div class="pocket-name">${plant.name}</div>
+            <div class="pocket-stepper">
+                <button class="qty-btn" data-action="decrease" aria-label="Decrease ${plant.name.toLowerCase()} quantity" ${quantity <= 1 ? "disabled" : ""}>-</button>
+                <span class="qty-value">${quantity}</span>
+                <button class="qty-btn" data-action="increase" aria-label="Increase ${plant.name.toLowerCase()} quantity">+</button>
+            </div>
+        `;
+
+        if (plant.max_per_pocket && quantity > plant.max_per_pocket) {
           el.classList.add("warning");
           el.title = `Best with max ${plant.max_per_pocket} per pocket`;
         }
+
+        el.querySelector(".pocket-clear").addEventListener("click", (e) => {
+          e.stopPropagation();
+          handlePocketClear(tier, pocket);
+        });
+
+        el.querySelector('[data-action="decrease"]').addEventListener(
+          "click",
+          (e) => {
+            e.stopPropagation();
+            handleQuantityChange(tier, pocket, plantId, quantity - 1);
+          },
+        );
+
+        el.querySelector('[data-action="increase"]').addEventListener(
+          "click",
+          (e) => {
+            e.stopPropagation();
+            handleQuantityChange(tier, pocket, plantId, quantity + 1);
+          },
+        );
+      } else {
+        el.textContent = "+";
       }
 
       el.addEventListener("click", () => handlePocketClick(tier, pocket));
@@ -212,8 +245,6 @@ function renderPlanter() {
 
 async function handleTierToggle(tier, currentType) {
   const updatedType = currentType === "original" ? "leaf" : "original";
-  console.log("did this get clicked?");
-  console.log("updatedType: ", updatedType, "currentType: ", currentType);
 
   const res = await fetch(`${API}/layouts/${currentLayout.id}/tiers`, {
     method: "PUT",
@@ -233,21 +264,10 @@ async function handleTierToggle(tier, currentType) {
 
 async function handlePocketClick(tier, pocket) {
   if (!currentLayout) return;
+  if (!selectedPlantId) return; // if plant not selected and then pocket is clicked, do nothing
 
   const key = `${tier}-${pocket}`;
-  const existingPlantId = currentPockets[key];
-
-  let newPlantId = null;
-
-  if (existingPlantId) {
-    // clicking an already filled pocket should clear it
-    newPlantId = null;
-  } else if (selectedPlantId) {
-    // empty pocket will get assigned when clicked
-    newPlantId = selectedPlantId;
-  } else {
-    return; // empty pocket, do nothing
-  }
+  const newPlantId = selectedPlantId;
 
   const res = await fetch(`${API}/layouts/${currentLayout.id}/pockets`, {
     method: "PUT",
@@ -261,17 +281,53 @@ async function handlePocketClick(tier, pocket) {
     return;
   }
 
-  if (newPlantId) {
-    currentPockets[key] = newPlantId;
-  } else {
-    delete currentPockets[key];
-  }
+  currentPockets[key] = { plantId: newPlantId, quantity: 1 };
 
   renderPlanter();
 }
 
+async function handlePocketClear(tier, pocket) {
+  const key = `${tier}-${pocket}`;
+
+  const res = await fetch(`${API}/layouts/${currentLayout.id}/pockets`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ tier, pocket, plant_id: null, quantity: 1 }),
+  });
+
+  if (!res.ok) {
+    const err = await res.json();
+    alert(err.detail);
+    return;
+  }
+
+  delete currentPockets[key];
+  renderPlanter();
+}
+
+async function handleQuantityChange(tier, pocket, plantId, quantity) {
+  const key = `${tier}-${pocket}`;
+
+  const res = await fetch(`${API}/layouts/${currentLayout.id}/pockets`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ tier, pocket, plant_id: plantId, quantity }),
+  });
+
+  if (!res.ok) {
+    const err = await res.json();
+    alert(err.detail);
+    return;
+  }
+
+  currentPockets[key] = { plantId, quantity };
+  renderPlanter();
+}
+
 async function checkCompatibility() {
-  const plantIds = [...new Set(Object.values(currentPockets))];
+  const plantIds = [
+    ...new Set(Object.values(currentPockets).map(({ plantId }) => plantId)),
+  ];
 
   if (plantIds.length < 2) {
     alert("Add at least 2 different plants to check compatibility.");
@@ -346,7 +402,6 @@ function setupEventListeners() {
   });
 
   document.getElementById("new-layout-btn").addEventListener("click", () => {
-    console.log("is there suppose to be a modal here???");
     document.getElementById("modal-overlay").classList.remove("hidden");
     document.getElementById("modal-name").focus();
   });
@@ -358,7 +413,6 @@ function setupEventListeners() {
   document
     .getElementById("modal-create")
     .addEventListener("click", async () => {
-      console.log(">>>> modal create clicke <<<<");
       const name = document.getElementById("modal-name").value.trim();
       const tiers = parseInt(document.getElementById("modal-tiers").value);
 
