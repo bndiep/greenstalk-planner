@@ -113,6 +113,8 @@ Note to self: the frontend must be served via a local server (not opened directl
 - [ ] Sunlight zone mapping (i.e. warn if a shade plant is assigned to a top tier which has the most sun exposure)
 - [ ] Plant search/filter by name in the sidebar
 - [ ] Drag and drop pocket assignment (but think through a11y first)
+- [ ] Edit plant stepper to instead edit the quantity number
+- [ ] Increase pocket size
 
 ### Low priority
 

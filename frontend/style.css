@@ -386,7 +386,7 @@ aside h2 {
 
 .pocket {
   aspect-ratio: 1;
-  border-radius: 50%;
+  border-radius: 16px;
   background: var(--pocket-empty);
   border: 2px dashed var(--stone-light);
   display: flex;
@@ -427,8 +427,8 @@ aside h2 {
 
 .pocket-clear,
 .qty-btn {
-  width: 2rem;
-  height: 2rem;
+  width: 44px;
+  height: 44px;
   border-radius: 100%;
 }
 
