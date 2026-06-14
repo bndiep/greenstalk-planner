@@ -88,9 +88,9 @@ Note to self: the frontend must be served via a local server (not opened directl
 
 ## a11y checklist
 
-- [ ] turn cards and pockets into buttons for better keyboard nav
-- [ ] add arial labels to cards and pockets
-- [ ] announce selected plant cards
+- [x] turn cards and pockets into buttons for better keyboard nav
+- [x] add arial labels to cards and pockets
+- [x] announce selected plant cards
 - [ ] add appropriate roles to elements
 - [ ] check and fix focus state on modal open
 - [ ] allow ability to close modal with esc key
@@ -101,36 +101,37 @@ Note to self: the frontend must be served via a local server (not opened directl
 
 ### High priority
 
-- Tier type toggle in the UI (`leaf` vs. `original` per tier with visual indicator)
-- `max_per_pocket` warning — highlight overcrowded pockets with quantity input
-- Expand plant library to full official Greenstalk list (~50 plants)
-- ID-based compatibility lookups instead of name string matching (more robust)
+- [ ] Tier type toggle in the UI (`leaf` vs. `original` per tier with visual indicator)
+- [ ] `max_per_pocket` warning — highlight overcrowded pockets with quantity input
+- [ ] Expand plant library to full official Greenstalk list (~50 plants)
+- [ ] ID-based compatibility lookups instead of name string matching (more robust)
 
 ### Medium priority
 
-- LLM-powered compatibility advisor (swap in Claude API or local Ollama model to save on cost and for the ask of learning!)
-- Seasonal rotation suggestions (i.e. flag plants that shouldn't follow each other in the same pocket)
-- Sunlight zone mapping (i.e. warn if a shade plant is assigned to a top tier which has the most sun exposure)
-- Plant search/filter by name in the sidebar
-- Drag and drop pocket assignment (but think through a11y first)
+- [ ] LLM-powered compatibility advisor (swap in Claude API or local Ollama model to save on cost and for the ask of learning!)
+- [ ] Seasonal rotation suggestions (i.e. flag plants that shouldn't follow each other in the same pocket)
+- [ ] Sunlight zone mapping (i.e. warn if a shade plant is assigned to a top tier which has the most sun exposure)
+- [ ] Plant search/filter by name in the sidebar
+- [ ] Drag and drop pocket assignment (but think through a11y first)
 
 ### Low priority
 
-- Alembic migrations for schema changes (i.e. replace manually deleting db and recreating workflow with light and safe way to make db migrations)
-- Move to Postgres for production-grade constraint enforcement
-- Mobile-friendly layout for use in the garden
-- Export layout as PDF or image to reference while planting (just for the sake of learning!)
-- Support multiple users / auth (currently single-user, no auth)
-- Watering schedule based on water needs per tier
+- [ ] Alembic migrations for schema changes (i.e. replace manually deleting db and recreating workflow with light and safe way to make db migrations)
+- [ ] Move to Postgres for production-grade constraint enforcement
+- [ ] Mobile-friendly layout for use in the garden
+- [ ] Export layout as PDF or image to reference while planting (just for the sake of learning!)
+- [ ] Support multiple users / auth (currently single-user, no auth)
+- [ ] Watering schedule based on water needs per tier
+- [ ] Add ability to favorite layouts
 
 ## Fun but super optional nice to haves
 
-- Drawings of all the possible plants
-- Color match the containers
-- Cute (but informative) error and warning messages
-- Add germination times
-- Add zones
-- Maybe include the current weather in the corner?
+- [ ] Drawings of all the possible plants
+- [ ] Color match the containers
+- [ ] Cute (but informative) error and warning messages
+- [ ] Add germination times
+- [ ] Add zones
+- [ ] Maybe include the current weather in the corner?
 
 ## Known Limitations
 
