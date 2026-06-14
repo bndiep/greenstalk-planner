@@ -21,7 +21,7 @@
 }
 
 body {
-  font-family: "DM Sans", sans-serif;
+  font-family: "Atkinson Hyperlegible", sans-serif;
   background: var(--cream);
   color: var(--text);
   min-height: 100vh;
@@ -45,8 +45,8 @@ header {
 }
 
 h1.logo {
-  font-family: "DM Serif Display", serif;
-  font-size: 1.3rem;
+  font-family: "Atkinson Hyperlegible", sans-serif;
+  font-size: 2rem;
   font-weight: 400;
 }
 
@@ -190,7 +190,7 @@ aside {
 }
 
 aside h2 {
-  font-family: "DM Serif Display", serif;
+  font-family: "Atkinson Hyperlegible", sans-serif;
   font-size: 1.1rem;
   margin-bottom: 1rem;
   color: var(--green-dark);
@@ -238,6 +238,7 @@ aside h2 {
 }
 
 .plant-card {
+  width: 100%;
   background: var(--cream);
   border: 1px solid var(--stone-light);
   border-radius: 10px;
@@ -334,7 +335,7 @@ aside h2 {
 }
 
 .planter-header h2 {
-  font-family: "DM Serif Display", serif;
+  font-family: "Atkinson Hyperlegible", sans-serif;
   font-size: 1.5rem;
   color: var(--green-dark);
 }
@@ -356,7 +357,7 @@ aside h2 {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  max-width: 700px;
+  max-width: 1000px;
 }
 
 .tier-row {
@@ -393,7 +394,7 @@ aside h2 {
   justify-content: center;
   cursor: pointer;
   transition: all 0.15s;
-  font-size: 0.65rem;
+  font-size: 1rem;
   text-align: center;
   color: var(--stone);
   padding: 4px;
@@ -406,6 +407,8 @@ aside h2 {
 }
 
 .pocket.filled {
+  display: flex;
+  flex-direction: column;
   background: var(--green-pale);
   border: 2px solid var(--green-light);
   color: var(--green-dark);
@@ -422,6 +425,21 @@ aside h2 {
   background: #fef3c7;
 }
 
+.pocket-clear,
+.qty-btn {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 100%;
+}
+
+.pocket-clear {
+  margin-bottom: 1rem;
+}
+
+.qty-btn {
+  margin-top: 0.25rem;
+}
+
 /* ─── Compatibility Result ────────────────────────────────── */
 
 #compat-result {
@@ -434,7 +452,7 @@ aside h2 {
 }
 
 #compat-result h3 {
-  font-family: "DM Serif Display", serif;
+  font-family: "Atkinson Hyperlegible", sans-serif;
   color: var(--green-dark);
   margin-bottom: 0.75rem;
 }
@@ -470,7 +488,7 @@ aside h2 {
 }
 
 #modal h2 {
-  font-family: "DM Serif Display", serif;
+  font-family: "Atkinson Hyperlegible", sans-serif;
   color: var(--green-dark);
   margin-bottom: 1.25rem;
 }
